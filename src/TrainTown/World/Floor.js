@@ -4,10 +4,21 @@ import RayControl from '../Utils/RayControl.js';
 import toonVert from '../../shaders/vert.glsl'
 import toonFrag from '../../shaders/frag_floor.glsl'
 
+let instance = null
+
 export default class Floor
 {
     constructor()
     {
+        if(instance)
+        {
+            return instance
+        }
+
+        instance = this
+
+        window.floor = this;
+
         this.trainTown = new TrainTown()
         this.scene = this.trainTown.scene
         this.resources = this.trainTown.resources

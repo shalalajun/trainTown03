@@ -82,7 +82,7 @@ export default class Grass
         
         }
 
-        console.log(this.grassGeometry)
+        
     }
 
     update()
