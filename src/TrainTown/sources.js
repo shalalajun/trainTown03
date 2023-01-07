@@ -30,11 +30,6 @@ export default [
         
     },
     {
-        name: 'cat',
-        type: 'gltfModel',
-        path: 'models/Cat/cat.glb'
-    },
-    {
         name: 'train',
         type: 'gltfModel',
         path: 'models/Train/train.glb'
@@ -42,7 +37,7 @@ export default [
     {
         name: 'catman',
         type: 'gltfModel',
-        path: 'models/cat/cat01.glb'
+        path: 'models/Cat/cat01.glb'
     },
     {
         name: 'girl',

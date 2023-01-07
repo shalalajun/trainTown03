@@ -20,7 +20,7 @@ export default class World
         {
             // 리소스가 모두 로드되고 환경을 인스턴스한다.
             //console.log('ready')
-           // this.catMan = new CatMan()
+            this.catMan = new CatMan()
          //   this.girl = new Girl()
             this.floor = new Floor()   
             
@@ -63,6 +63,11 @@ export default class World
         if(this.grass)
         {
             this.grass.update()
+        }
+
+        if(this.curlCreature)
+        {
+            this.curlCreature.update()
         }
     }
 }

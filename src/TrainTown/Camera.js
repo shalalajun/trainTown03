@@ -24,8 +24,8 @@ export default class Camera
             0.1,
             1000
         )
-       // this.instance.position.set(0, 2, 20) //캐릭터용
-        this.instance.position.set(0, 0, 10)
+       this.instance.position.set(0, 2, 20) //캐릭터용
+        //this.instance.position.set(0, 0, 10)
        
         this.scene.add(this.instance)
        
@@ -46,6 +46,6 @@ export default class Camera
     update()
     {
         this.controls.update()
-        //this.instance.lookAt(0,4,0)//캐릭터용
+        this.instance.lookAt(0,4,0)//캐릭터용
     }
 }

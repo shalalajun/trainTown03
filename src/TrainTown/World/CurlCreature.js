@@ -28,28 +28,22 @@ export default class CurlCreature
 
         this.mouse = new THREE.Vector2()
         this.eMouse = new THREE.Vector2()
-        this.elasticMouse = new THREE.Vector2(0,0)
+        this.elasticMouse = new THREE.Vector2()
         this.elasticMouseVel = new THREE.Vector2(0,0)
+        this.temp = new THREE.Vector2()
         
         this.raycaster = new THREE.Raycaster()
         this.document = document.querySelector('canvas.webgl')
 
         this.setMesh()
-        this.setRayCast()
+        //this.setRayCast()
        
 
     }
 
     setRayCast()
     {
-        this.sphere = new THREE.Mesh(
-            new THREE.SphereGeometry(0.2,10),
-            new THREE.MeshBasicMaterial({color:0xa8e6cf})
-        )
-        this.scene.add(this.sphere)
-
-       
-
+        
 
         
         this.document.addEventListener('mousemove',(event)=>{
@@ -59,17 +53,20 @@ export default class CurlCreature
          
             this.raycaster.setFromCamera(this.mouse, this.camera)
 
+            this.eMouse.x = event.clientX
+            this.eMouse.y = event.clientY
+
+
            // console.log(this.floor)
-            const intersects = this.raycaster.intersectObjects([this.floor.mesh])
+            const intersects = this.raycaster.intersectObjects([this.rayPlane])
             if(intersects.length>0)
             {
                 let p = intersects[0].point
-                this.sphere.position.copy(p)
+                //this.sphere.position.copy(p)
+                this.eMouse.x = p.x
+                this.eMouse.y = p.y
             }    
         })
-
-    
-
     }
 
     computeCurl(x, y, z){
@@ -111,6 +108,7 @@ export default class CurlCreature
 
       setMesh()
       {
+        
         this.material = new THREE.ShaderMaterial(
             {
                 extensions: 
@@ -121,6 +119,7 @@ export default class CurlCreature
                 uniforms: 
                 {
                     time: { value: 0},
+                    uLight: {value: new THREE.Vector3(0, 0, 0)},
                     resolution: { value: new THREE.Vector4()},
                 },
 
@@ -128,6 +127,22 @@ export default class CurlCreature
                 fragmentShader: fragment
             }
         )
+
+        this.sphere = new THREE.Mesh(
+            new THREE.SphereGeometry(0.05,10),
+            new THREE.MeshBasicMaterial({color:0xa8e6cf}))
+
+        this.rayPlane = new THREE.Mesh(
+            new THREE.PlaneGeometry(10,10),
+            this.material)
+        this.rayPlane.position.set(0,0,-2)
+        this.rayPlane.visible = false
+        this.scene.add(this.rayPlane)
+
+
+        //this.sphere.rotation.z = -Math.PI * 0.5
+        this.scene.add(this.sphere)
+
 
         //this.geometry = new THREE.PlaneGeometry(10, 10, 10, 10)
 
@@ -137,9 +152,9 @@ export default class CurlCreature
 
             let path = new THREE.CatmullRomCurve3(
                 this.setCurve(new THREE.Vector3(
-                    Math.random()-0.5,
-                    Math.random()-0.5,
-                    Math.random()-0.5,
+                    (Math.random()-0.5) * 5,
+                    (Math.random()-0.5) * 5,
+                    (Math.random()-0.5) * 5,
                     )
                 ));
             let geometry = new THREE.TubeGeometry(path,600,0.005,8,false)
@@ -153,7 +168,7 @@ export default class CurlCreature
 
       setCurve(start)
       {
-        let scale = 3
+        let scale = 4
         let points = []
         points.push(start)
 
@@ -163,7 +178,7 @@ export default class CurlCreature
 
         //let start = new THREE.Vector3(0,0,0)
 
-        for(let i=0; i <600; i++)
+        for(let i=0; i <800; i++)
         {
             let v = this.computeCurl(currentPoint.x/scale, currentPoint.y/scale, currentPoint.z/scale)
           
@@ -173,6 +188,21 @@ export default class CurlCreature
        
         }
         return points
+      }
+
+      update()
+      {
+       window.document.querySelector('.cursor').style.transform = `translate(${this.elasticMouse.x}px,${this.elasticMouse.y}px)`;
+       this.temp.copy(this.eMouse).sub(this.elasticMouse).multiplyScalar(0.04)
+       this.elasticMouseVel.add(this.temp)
+       this.elasticMouseVel.multiplyScalar(0.8)
+       this.elasticMouse.add(this.elasticMouseVel)
+
+       this.sphere.position.x = this.elasticMouse.x
+       this.sphere.position.y = this.elasticMouse.y
+
+       this.material.uniforms.uLight.value = this.sphere.position
+       this.material.uniforms.time.value += 0.02;
       }
 
 }
